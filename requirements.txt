@@ -1,0 +1,10 @@
+redis==3.5.3
+structlog==21.1.0
+WTForms==2.3.3
+bottle==0.12.19
+peewee==3.14.4
+redislite==6.0.674960
+psutil==5.8.0
+setuptools==58.0.4
+MarkupSafe==2.0.1
+prometheus-client==0.11.0
