@@ -10,7 +10,7 @@ import json
 import random
 import string
 from uuid import UUID
-from utils.logging import LogMixin
+from bottle_utils.src.monitoring.logging import LogMixin
 from abc import ABCMeta, abstractproperty
 
 

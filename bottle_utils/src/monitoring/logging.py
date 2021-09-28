@@ -1,27 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""/app/utils/logging.py
+"""
 
 Logging Utilities
 
 """
-# === Start imports ===#
-# standard library imports
 import logging
-
 import structlog
 import sys
 
-# === End Imports ===#
 
 def configure_logging(log_level=logging.INFO):
-    logging.basicConfig(
-        level=log_level,
-        format="%(message)s",
-        stream=sys.stdout
-    )
+    logging.basicConfig(level=log_level, format="%(message)s", stream=sys.stdout)
 
-    processors=[
+    processors = [
         structlog.stdlib.add_logger_name,
         structlog.stdlib.filter_by_level,
         structlog.stdlib.add_log_level,
@@ -29,7 +21,7 @@ def configure_logging(log_level=logging.INFO):
         structlog.processors.ExceptionPrettyPrinter(),
         structlog.processors.StackInfoRenderer(),
         structlog.processors.format_exc_info,
-        structlog.processors.TimeStamper(fmt='iso'),
+        structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.JSONRenderer(indent=1, sort_keys=True),
     ]
 
@@ -37,9 +29,9 @@ def configure_logging(log_level=logging.INFO):
         processors=processors,
         logger_factory=structlog.stdlib.LoggerFactory(),
         wrapper_class=structlog.stdlib.BoundLogger,
-        cache_logger_on_first_use=True
+        cache_logger_on_first_use=True,
     )
-    
+
 
 class LogMixin:
     @property

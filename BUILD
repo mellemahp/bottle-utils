@@ -1,17 +1,47 @@
-load("@pip_deps//:requirements.bzl", "requirement")
+alias(
+    name = "connectors",
+    actual = "//bottle_utils/src/connectors:connectors_lib",
+    visibility = ["//visibility:public"],
+)
 
-py_library(
-    name = "bottle-utils",
-    srcs = [] + glob(["utils/**/*.py"], exclude=["**/__pycache__/**"]),
-    deps = [
-        requirement("redis"),
-        requirement("structlog"),
-        requirement("bottle"),
-        requirement("redislite"),
-        requirement("peewee"),
-        requirement("WTForms"),
-        requirement("prometheus-client"),
-        requirement("Jinja2")
-    ],
-    visibility = ["//visibility:public"]
+alias(
+    name = "forms",
+    actual = "//bottle_utils/src/counters:counters_lib",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "forms",
+    actual = "//bottle_utils/src/emails:emails_lib",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "forms",
+    actual = "//bottle_utils/src/forms:forms_lib",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "monitoring",
+    actual = "//bottle_utils/src/monitoring:monitoring_lib",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "templating",
+    actual = "//bottle_utils/src/templating:templating_lib",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "tokens",
+    actual = "//bottle_utils/src/tokens:tokens_lib",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "wrappers",
+    actual = "//bottle_utils/src/wrappers:wrappers_lib",
+    visibility = ["//visibility:public"],
 )

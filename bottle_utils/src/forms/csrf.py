@@ -10,7 +10,7 @@ Currently supported session stores:
 
 """
 from wtforms.csrf.core import CSRF
-from utils.tokens.token_manager import BaseTokenManager
+from bottle_utils.src.tokens.token_manager import BaseTokenManager
 
 
 class RedisCacheCSRF(CSRF):

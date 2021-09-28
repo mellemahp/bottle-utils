@@ -9,8 +9,8 @@ managing Session tokens using Redis as the Backend data store
 import json
 from bottle import response
 import structlog
-from utils.tokens.token_manager import BaseTokenManager
-from utils.tokens.csrf import CSRF_FIELD_NAME
+from bottle_utils.src.tokens.token_manager import BaseTokenManager
+from bottle_utils.src.tokens.csrf import CSRF_FIELD_NAME
 
 
 class InvalidSessionException(Exception):

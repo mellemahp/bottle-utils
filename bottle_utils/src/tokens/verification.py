@@ -6,7 +6,7 @@ Token manager class and associated settings and exceptions for
 managing Email validation tokens using Redis as the Backend data store
 
 """
-from utils.tokens.token_manager import BaseTokenManager
+from bottle_utils.src.tokens.token_manager import BaseTokenManager
 import json
 
 
