@@ -10,7 +10,8 @@ py_library(
         requirement("redislite"),
         requirement("peewee"),
         requirement("WTForms"),
-        requirement("prometheus-client")
+        requirement("prometheus-client"),
+        requirement("Jinja2")
     ],
     visibility = ["//visibility:public"]
 )

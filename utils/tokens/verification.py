@@ -1,59 +1,51 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""/app/utils/tokens/validation.py
+"""Module for managing email validation Tokens in a Bottle app using Redis
 
-Utility functions for managing email validation tokens in the context aware dashboard demo
+Token manager class and associated settings and exceptions for 
+managing Email validation tokens using Redis as the Backend data store
 
 """
-# === Start imports ===#
-from .token_manager import BaseTokenManager
-
+from utils.tokens.token_manager import BaseTokenManager
 import json
 
-# === End Imports ===#
 
 VERIFICATION_TOKEN_LENGTH = 20
 VERIFICATION_KEY_PREFIX = "email-verification"
-VERIFICATION_TOKEN_EXPIRATION_SEC = 86400 # 1 day in seconds
+VERIFICATION_TOKEN_EXPIRATION_SEC = 86400  # 1 day in seconds
 
 
-class VerificationTokenInvalidException(Exception): 
+class VerificationTokenInvalidException(Exception):
     pass
 
 
-class VerificationTokenManager(BaseTokenManager): 
-
+class VerificationTokenManager(BaseTokenManager):
     def __init__(self, redis_client):
         super().__init__(
-            VERIFICATION_TOKEN_LENGTH , 
-            VERIFICATION_TOKEN_EXPIRATION_SEC, 
-            VERIFICATION_KEY_PREFIX, 
-            redis_client
+            VERIFICATION_TOKEN_LENGTH,
+            VERIFICATION_TOKEN_EXPIRATION_SEC,
+            VERIFICATION_KEY_PREFIX,
+            redis_client,
         )
 
-
-    def is_valid_verification_token(self, token): 
+    def is_valid_verification_token(self, token):
         return self.does_token_exist(token)
-
 
     def expire_verification_token(self, token):
         self.expire_token(token)
 
-
-    def get_verification_token_user_data(self, token): 
+    def get_verification_token_user_data(self, token):
         if token == None:
             raise VerificationTokenInvalidException("No Email Validation Token")
 
-        elif not self.is_valid_verification_token(token): 
+        elif not self.is_valid_verification_token(token):
             raise VerificationTokenInvalidException("Invalid Email Validation Token")
 
         return json.loads(self.get_token_data(token))
 
-
-    def create_email_verification_token(self, user): 
+    def create_email_verification_token(self, user):
         token = self.generate_token()
-        data = { "user_id": user.uuid }
+        data = {"user_id": user.uuid}
         self.set_token_data(token, data)
 
         return token
-
