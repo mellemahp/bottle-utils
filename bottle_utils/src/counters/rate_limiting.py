@@ -28,10 +28,11 @@ class RateLimitCounterManager(LogMixin):
             return self.create_counter(counter_key)
 
     def get_counter_key(self):
-        hashed_data = hashlib.sha256(self.HASHED_FORMAT_STR.format(
-            ip_addr = request.remote_addr, 
-            url = request.url
-        ).encode("utf8")).hexdigest()
+        hashed_data = hashlib.sha256(
+            self.HASHED_FORMAT_STR.format(
+                ip_addr=request.remote_addr, url=request.url
+            ).encode("utf8")
+        ).hexdigest()
 
         return f"{RATE_LIMIT_PREFIX}:{hashed_data}"
 

@@ -22,7 +22,9 @@ class RedisCacheCSRF(CSRF):
     def setup_form(self, form):
         # Check that the token manager exists and is a TokenManager
         if not isinstance(form.meta.csrf_token_mgr, BaseTokenManager):
-            raise ValueError("CSFR Token manager must be an instance of BaseTokenManager")
+            raise ValueError(
+                "CSFR Token manager must be an instance of BaseTokenManager"
+            )
 
         self.csrf_token_mgr = form.meta.csrf_token_mgr
         self.session = form.meta.session
