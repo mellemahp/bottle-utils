@@ -49,7 +49,7 @@ PASSWORD_CONFIRMATION = PasswordField(
     [
         validators.Regexp(
             PASSWORD_REGEX,
-            message="Password must have at least one letter, number, and special character",
+            message="Password must have one letter, number, and special character",
         ),
         validators.InputRequired(),
         validators.EqualTo("password", message="Passwords must match"),

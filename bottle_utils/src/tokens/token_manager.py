@@ -11,30 +11,31 @@ import random
 import string
 from uuid import UUID
 from bottle_utils.src.monitoring.logging import LogMixin
-from abc import ABCMeta, abstractproperty
 
 
 class TokenException(Exception):
-    pass
+    """Generic exception for CRUD operations on tokens"""
 
 
 class TokenReadException(TokenException):
-    pass
+    """Thrown when token cannot be read from db"""
 
 
 class TokenWriteException(TokenException):
-    pass
+    """Thrown when token cannot be written to db"""
 
 
 class TokenExpirationException(TokenException):
-    pass
+    """Thrown when token expiration cannot be set"""
 
 
 class TokenRefreshException(TokenException):
-    pass
+    """Exception thrown when token expiration refresh fails"""
 
 
 class BaseTokenManager(LogMixin):
+    """Base class for managers of tokens stored in redis"""
+
     def __init__(
         self, token_length, token_expiration_sec, token_cache_prefix, redis_client
     ):
@@ -44,6 +45,14 @@ class BaseTokenManager(LogMixin):
         self.redis_client = redis_client
 
     def does_token_exist(self, token):
+        """Checks for token in key-value store
+
+        Arguments:
+            token (str): key value to check for in key-value store
+
+        Raises:
+            TokenReadException: unable to reach key-value store
+        """
         try:
             return self.redis_client.exists(f"{self.token_cache_prefix}:{token}")
 
@@ -52,6 +61,15 @@ class BaseTokenManager(LogMixin):
             raise TokenReadException("Failed to access Token cache")
 
     def expire_token(self, token):
+        """Removes a token from the key-value store
+
+        Args:
+            token (str): token to expire
+
+        Raises:
+            TokenExpirationException: raised on failure to delete
+
+        """
         try:
             self.redis_client.delete(f"{self.token_cache_prefix}:{token}")
 
@@ -60,6 +78,15 @@ class BaseTokenManager(LogMixin):
             raise TokenExpirationException("Could Not Expire Token")
 
     def refresh_token(self, token):
+        """Resets the expiration time of a token
+
+        Args:
+            token (str): token to reset expiration time for
+
+        Raises:
+            TokenRefreshException: raised on failure to edit
+
+        """
         try:
             self.redis_client.expire(token, self.token_expiration_sec)
 
@@ -68,6 +95,15 @@ class BaseTokenManager(LogMixin):
             raise TokenRefreshException("Could not refresh Token")
 
     def get_token_data(self, token):
+        """Gets data attached to a token `key` in the key-value store
+
+        Args:
+            token (str): key to get value for in key-value store
+
+        Raises:
+            TokenReadException: error reading key-value store
+
+        """
         try:
             return self.redis_client.get(f"{self.token_cache_prefix}:{token}")
 
@@ -76,6 +112,20 @@ class BaseTokenManager(LogMixin):
             raise TokenReadException("Failed to read Token Data")
 
     def set_token_data(self, token, data):
+        """Attaches data to the key (token) value in the key-value store
+
+        Args:
+            token (str):
+            data (<? encodable to json>): Some data that can be converted
+                to a json-formatted string
+
+        Raises:
+            TokenWriteException: error writing to key-value store
+
+        Notes:
+            - Sets a default expiration time on this data
+
+        """
         try:
             self.redis_client.set(
                 f"{self.token_cache_prefix}:{token}",
@@ -88,6 +138,16 @@ class BaseTokenManager(LogMixin):
             raise TokenWriteException("Could not write token data to cache")
 
     def generate_token(self):
+        """Generates a random token of some length
+
+        Returns:
+            String
+
+        Notes:
+            - Requires a default token length to be set
+            - Uses the system random generator for maximal randomness
+
+        """
         return "".join(
             random.SystemRandom().choice(
                 string.ascii_lowercase + string.ascii_uppercase + string.digits
@@ -97,8 +157,10 @@ class BaseTokenManager(LogMixin):
 
 
 class UUIDEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, UUID):
+    """UUID encoder to allow the writing of UUID's to json format"""
+
+    def default(self, o):
+        if isinstance(o, UUID):
             # if the obj is uuid, we simply return the value of uuid
-            return obj.hex
-        return json.JSONEncoder.default(self, obj)
+            return o.hex
+        return json.JSONEncoder.default(self, o)

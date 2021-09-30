@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
+"""CSRF management wrappers for bottle routes
+
+Allows users to add csrf-enabled WTForms form to a route.
 
 """
 from bottle_utils.src.templating.flash import Flash, FlashLvl
@@ -8,12 +10,12 @@ from bottle import request
 
 
 def csrf_form(form_class):
-    """Generate a form with csrf"""
+    """Generate form with csrf for a route to return to a user"""
 
     def decorator(fxn):
         def wrapper(*args, **kwargs):
-            # If the form is already being passed in then the function is being called by another
-            # route internally and we can just return
+            # If the form is already being passed in then the function is being
+            # called by another route internally and we can just return
             if "form" in kwargs:
                 return fxn(*args, **kwargs)
 
@@ -21,6 +23,7 @@ def csrf_form(form_class):
                 form = form_class(
                     request.POST,
                     meta={
+                        # pylint: disable=no-member
                         "csrf_token_mgr": request.app.csrf_mgr,
                         "session": kwargs.get("session", None),
                     },
@@ -29,7 +32,7 @@ def csrf_form(form_class):
                 if form.validate():
                     return fxn(*args, form=form, **kwargs)
 
-                elif form.errors:
+                if form.errors:
                     errors = [
                         Flash(FlashLvl.ERROR, error[0])
                         for error in [
@@ -39,19 +42,22 @@ def csrf_form(form_class):
 
                     return fxn(*args, form=form, errors=errors, **kwargs)
 
+                raise ValueError(
+                    "Internal Service Error. Something went terribly wrong"
+                )
+
             # Form needs to be built for a get route
-            elif request.method == "GET":
+            if request.method == "GET":
                 form = form_class(
                     meta={
+                        # pylint: disable=no-member
                         "csrf_token_mgr": request.app.csrf_mgr,
                         "session": kwargs.get("session", None),
                     }
                 )
                 return fxn(*args, form=form, **kwargs)
-            else:
-                raise ValueError(
-                    "This branch should not be reachable. Something went terribly wrong"
-                )
+
+            raise ValueError("Internal Service Error. Something went terribly wrong")
 
         return wrapper
 

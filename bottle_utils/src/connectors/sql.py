@@ -15,9 +15,9 @@ import os
 import time
 import structlog
 
-from peewee import OperationalError
+from peewee import OperationalError, SqliteDatabase
 from playhouse.db_url import connect
-from peewee import SqliteDatabase
+
 
 log = structlog.get_logger(__name__)
 
@@ -26,12 +26,14 @@ TEST_TIMEOUT = 100
 
 
 def connect_to_db():
-    """
-    Established a connection to a Postgresql database
+    """Established a connection to a Postgresql database
+
     Returns:
         peewee.PostgresqlDatabase
+
     Raises:
         TimeoutError: couldnt connect to database after ${DB_TIMEOUT} seconds
+
     Note:
         Requires a number of environment variables to be set
         [DB_TIMEOUT, DB_USER, DB_PASS, DB_HOST, DB_PORT, DB_NAME]
@@ -41,7 +43,7 @@ def connect_to_db():
     timeout = int(os.environ.get("DB_TIMEOUT", 100))
     while wait_time < timeout:
         try:
-            db = connect(
+            database = connect(
                 "postgresql://{}:{}@{}:{}/{}".format(
                     os.environ.get("DB_USER"),
                     os.environ.get("DB_PASS"),
@@ -63,7 +65,7 @@ def connect_to_db():
 
     log.info("CONNECTED TO DATABASE")
 
-    return db
+    return database
 
 
 def connect_to_sqlite_local_db():
@@ -82,7 +84,7 @@ def connect_to_sqlite_local_db():
     timeout = TEST_TIMEOUT
     while wait_time < timeout:
         try:
-            db = SqliteDatabase(LOCAL_SQLITE_FILENAME)
+            database = SqliteDatabase(LOCAL_SQLITE_FILENAME)
             break
 
         except OperationalError:
@@ -96,4 +98,4 @@ def connect_to_sqlite_local_db():
 
     log.info("CONNECTED TO DATABASE (LOCAL TEST)")
 
-    return db
+    return database

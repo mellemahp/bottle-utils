@@ -35,10 +35,10 @@ class VerificationTokenManager(BaseTokenManager):
         self.expire_token(token)
 
     def get_verification_token_user_data(self, token):
-        if token == None:
+        if token is None:
             raise VerificationTokenInvalidException("No Email Validation Token")
 
-        elif not self.is_valid_verification_token(token):
+        if not self.is_valid_verification_token(token):
             raise VerificationTokenInvalidException("Invalid Email Validation Token")
 
         return json.loads(self.get_token_data(token))

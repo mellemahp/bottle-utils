@@ -11,12 +11,13 @@ Currently supported session stores:
 """
 from wtforms.csrf.core import CSRF
 from bottle_utils.src.tokens.token_manager import BaseTokenManager
+from bottle_utils.src.tokens.csrf import CSRFInvalidException
 
 
 class RedisCacheCSRF(CSRF):
     """
-    Generate a CSRF token for form using a token provider based on storing CSRF tokens in a redis
-    key-value store
+    Generate a CSRF token for form using a token provider based on storing CSRF
+    tokens in a redis key-value store
     """
 
     def setup_form(self, form):
@@ -26,25 +27,25 @@ class RedisCacheCSRF(CSRF):
                 "CSFR Token manager must be an instance of BaseTokenManager"
             )
 
+        # pylint: disable=attribute-defined-outside-init
         self.csrf_token_mgr = form.meta.csrf_token_mgr
+        # pylint: disable=attribute-defined-outside-init
         self.session = form.meta.session
 
-        return super(RedisCacheCSRF, self).setup_form(form)
+        return super().setup_form(form)
 
     def generate_csrf_token(self, csrf_token_field):
-        if self.session == None:
+        if self.session is None:
             return self.csrf_token_mgr.create_sessionless_csrf_token()
-        else:
-            return self.session.csrf_token
+
+        return self.session.csrf_token
 
     def validate_csrf_token(self, form, field):
         token = field.data
-        if self.session == None:
-            is_valid = self.csrf_token_mgr.is_valid_sessionless_csrf(token)
-        else:
-            is_valid = self.csrf_token_mgr.validate_csrf_session_token(
-                token, self.session
-            )
-
-        if not is_valid:
-            raise ValueError("Invalid CSRF Token")
+        try:
+            if self.session is None:
+                self.csrf_token_mgr.validate_sessionless_csrf(token)
+            else:
+                self.csrf_token_mgr.validate_csrf_session_token(token, self.session)
+        except CSRFInvalidException as exc:
+            raise ValueError from exc

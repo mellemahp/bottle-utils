@@ -8,7 +8,6 @@ managing Session tokens using Redis as the Backend data store
 """
 import json
 from bottle import response
-import structlog
 from bottle_utils.src.tokens.token_manager import BaseTokenManager
 from bottle_utils.src.tokens.csrf import CSRF_FIELD_NAME
 
@@ -70,21 +69,21 @@ class SessionTokenManager(BaseTokenManager):
             csrf_token,
         )
 
-        self.set_token_data(session_token, session.__dict__())
+        self.set_token_data(session_token, session.__dict__)
 
         return session
 
     def get_session_from_token(self, token):
-        if token == None:
+        if token is None:
             raise InvalidSessionException("No Session data found")
 
-        if self.does_token_exist(token):
-            session_data = self.get_token_data(token)
-            self.refresh_token(token)
+        if not self.does_token_exist(token):
+            raise InvalidSessionException("Invalid Session data")
 
-            return Session.from_jsons(token, session_data)
+        session_data = self.get_token_data(token)
+        self.refresh_token(token)
 
-        raise InvalidSessionException("Invalid Session data")
+        return Session.from_jsons(token, session_data)
 
     def expire_session(self, session):
         self.expire_token(session.session_id)

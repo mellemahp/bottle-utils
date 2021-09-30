@@ -15,10 +15,12 @@ CSRF_SESSIONLESS_EXPIRATION_SEC = 600
 
 
 class CSRFInvalidException(Exception):
-    pass
+    """Invalid or Non-existant CSRF token"""
 
 
 class CSRFTokenManager(BaseTokenManager):
+    """Manager for CSRF tokens stored in a redis-based session store"""
+
     def __init__(self, redis_client):
         super().__init__(
             CSRF_TOKEN_LENGTH,
@@ -27,25 +29,59 @@ class CSRFTokenManager(BaseTokenManager):
             redis_client,
         )
 
-    def is_valid_sessionless_csrf(self, token):
-        return self.does_token_exist(token)
-
-    def expire_sessionless_csrf_token(self, token):
-        if self.is_valid_sessionless_csrf(token):
-            self.expire_token(token)
-
-    def validate_csrf_session_token(self, token, session):
-        if token == None:
-            raise CSRFInvalidException("No CSRF Token")
-
-        elif token != session.csrf_token:
-            raise CSRFInvalidException("Invalid CSRF Token")
-
-        else:
-            return True
-
     def create_sessionless_csrf_token(self):
+        """Creates a session token in the session store
+
+        Returns:
+            String: session token
+        """
         token = self.generate_token()
         self.set_token_data(token, "")
 
         return token
+
+    def expire_sessionless_csrf_token(self, token):
+        """Expires a session in the session store
+
+        Args:
+            token (str): session token to expire
+
+        """
+        try:
+            self.validate_sessionless_csrf(token)
+            self.expire_token(token)
+        except CSRFInvalidException:
+            pass
+
+    def validate_sessionless_csrf(self, token):
+        """Checks that the csrf token is in the session store
+
+        Args:
+            token (str): token to check against session store
+
+        Raises:
+            CSRFInvalidException: Bad or no csrf token
+
+        """
+        if token is None:
+            raise CSRFInvalidException("No CSRF Token")
+
+        if not self.does_token_exist(token):
+            raise CSRFInvalidException("Invalid CSRF Token")
+
+    def validate_csrf_session_token(self, token, session):
+        """Checks that the csrf token matches that on a session
+
+        Args:
+            token (str): token to check against user session
+            session (Session): user session
+
+        Raises:
+            CSRFInvalidException: Bad or no csrf token
+
+        """
+        if token is None:
+            raise CSRFInvalidException("No CSRF Token")
+
+        if token != session.csrf_token:
+            raise CSRFInvalidException("Invalid CSRF Token")

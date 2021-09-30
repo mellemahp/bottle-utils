@@ -4,7 +4,8 @@
 
 
 """
-import structlog
+# pylint: skip-file
+# TODO: Implement and remove pylint suppression
 from bottle import request, redirect, abort, HTTPError
 from bottle_utils.src.tokens.session import InvalidSessionException, SESSION_COOKIE_NAME
 from bottle_utils.src.tokens.csrf import CSRF_FIELD_NAME

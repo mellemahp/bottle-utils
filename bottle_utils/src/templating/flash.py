@@ -10,13 +10,14 @@ display level
 from enum import Enum
 
 
-class FlashLvl(Enum):
-    INFO = 0
-    WARN = 1
-    ERROR = 2
-
-
 class Flash:
+    """A Class representing a message to show to an app user
+
+    Flashes have a flash level which is like a log level for customer
+    facing notifications
+
+    """
+
     def __init__(self, level, message):
         if not isinstance(level, FlashLvl):
             raise ValueError("level must be a valid FlashLvl")
@@ -26,4 +27,13 @@ class Flash:
 
     @property
     def lvl(self):
+        """Level formatted for use in css"""
         return self._level.name.lower()
+
+
+class FlashLvl(Enum):
+    """ Level (think log level) of notification"""
+
+    INFO = 0
+    WARN = 1
+    ERROR = 2

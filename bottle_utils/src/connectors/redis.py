@@ -42,7 +42,8 @@ def connect_to_redis():
 
 def connect_to_redislite_local():
     """
-    Establishes a connection to a local python implementation of redis (redislite) for local testing
+    Establishes a connection to a local python implementation of redis (redislite)
+    for local testing
 
     Returns:
         redislite.Redis

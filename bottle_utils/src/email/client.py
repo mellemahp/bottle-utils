@@ -4,6 +4,8 @@
 
 
 """
+# pylint: skip-file
+# TODO: Implement and remove pylint suppression
 import json
 from bottle_utils.src.monitoring.logging import LogMixin
 
