@@ -13,7 +13,7 @@ from bottle_utils.src.tokens.csrf import CSRF_FIELD_NAME
 
 
 class InvalidSessionException(Exception):
-    pass
+    """Session does not exist or is invalid"""
 
 
 SESSION_COOKIE_NAME = "SESSIONID"
@@ -24,6 +24,8 @@ MAX_SESSION_COOKIE_AGE_SEC = 7200
 
 
 class SessionTokenManager(BaseTokenManager):
+    """Manager for Session data and tokens stored in a redis-based session store"""
+
     def __init__(self, csrf_mgr, redis_client):
         super().__init__(
             SESSION_TOKEN_LENGTH,
@@ -35,6 +37,15 @@ class SessionTokenManager(BaseTokenManager):
         self.user_to_session_mapper = UserToSessionTokenManager(redis_client)
 
     def create_and_set_session(self, user):
+        """Create a session in the session store for a given user
+
+        Args:
+            user (User): user to set session for
+
+        Notes:
+            - Sets the session token as a cookie in the bottle route response
+
+        """
         # Delete any existing sessions if they exist
         if self.user_to_session_mapper.does_user_session_exist(user):
             session = self.user_to_session_mapper.get_user_session(user)
@@ -54,6 +65,15 @@ class SessionTokenManager(BaseTokenManager):
         )
 
     def create_session(self, user):
+        """Creates a session for a user
+
+        Args:
+            user (User): user to create session for
+
+        Returns:
+            Session
+
+        """
         csrf_token = self.csrf_mgr.generate_token()
         session_token = self.generate_token()
 
@@ -74,6 +94,18 @@ class SessionTokenManager(BaseTokenManager):
         return session
 
     def get_session_from_token(self, token):
+        """Gets a session object from a session token
+
+        Args:
+            token (str): session token
+
+        Returns:
+            Session
+
+        Raises:
+            InvalidSessionException: Session is not valid
+
+        """
         if token is None:
             raise InvalidSessionException("No Session data found")
 
@@ -86,6 +118,12 @@ class SessionTokenManager(BaseTokenManager):
         return Session.from_jsons(token, session_data)
 
     def expire_session(self, session):
+        """Expires a session
+
+        Args:
+            session (Session): session to expire
+
+        """
         self.expire_token(session.session_id)
         self.user_to_session_mapper.expire_user_session_entry(session.user_uuid)
 
@@ -94,21 +132,27 @@ USER_TO_SESSION_CACHE_PREFIX = "user_to_sess"
 
 
 class UserToSessionTokenManager(BaseTokenManager):
+    """Manager for token that maps session to user name"""
+
     def __init__(self, redis_client):
         super().__init__(
             None, SESSION_EXPIRATION_SEC, USER_TO_SESSION_CACHE_PREFIX, redis_client
         )
 
     def does_user_session_exist(self, user):
+        """Checks for user having a session"""
         return self.does_token_exist(user.uuid)
 
     def get_user_session(self, user):
+        """Gets session data for user"""
         return self.get_token_data(user.uuid)
 
     def expire_user_session_entry(self, user):
+        """Expires user/session entry"""
         return self.expire_token(user.uuid)
 
     def create_user_to_session_entry(self, user, session):
+        """Creates a new user/session mapping entry"""
         self.set_token_data(user.uuid, session.session_id)
 
 
@@ -119,6 +163,7 @@ SETTINGS = "settings"
 
 
 class Session:
+    """Container Class for sessions"""
 
     # TODO: Session id's should be encrypted when read
     def __init__(
@@ -133,10 +178,18 @@ class Session:
 
     @classmethod
     def from_jsons(cls, session_id, json_string):
+        """Get a session from a json string
+
+        Args:
+            session_id (str): session id
+            json_string (str): json string of session data
+
+        """
         return cls.from_dict(session_id, json.loads(json_string))
 
     @classmethod
     def from_dict(cls, session_id, data):
+        """Gets a session from a dictionary object"""
         return Session(
             session_id,
             data[USER_ID_KEY],
