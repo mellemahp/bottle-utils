@@ -1,7 +1,7 @@
 name: Package Safety Check
 on: [ push, pull_request ]
 env:
-  DEP_PATH: src/requirements.txt
+  DEP_PATH: requirements.txt
 jobs:
   safety_check:
     runs-on: ubuntu-latest
