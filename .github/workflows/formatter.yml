@@ -1,7 +1,7 @@
-name: black-formatter-action
+name: formatting check
 on: [push, pull_request]
 jobs:
-  linter_name:
+  black_linter:
     name: runner / black formatter
     runs-on: ubuntu-latest
     steps:
