@@ -11,5 +11,5 @@ jobs:
       - run: pip3 install -U -r requirements.txt
       - run: pip3 install -U pylint
       - run: pip3 install -U pylint-fail-under
-      - run: pylint-fail-under --fail_under=9.0 --rcfile=.pylintrc bottle_utils/src/
+      - run: pylint-fail-under --fail_under 9.5 bottle_utils/src/
         
