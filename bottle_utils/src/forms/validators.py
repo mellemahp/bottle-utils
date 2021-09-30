@@ -41,7 +41,7 @@ PASSWORD = PasswordField(
     ],
 )
 
-PASSWORD_REGEX = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$"
+PASSWORD_REGEX = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$" # nosec
 PASSWORD_CONFIRMATION = PasswordField(
     "Confirm Password",
     [

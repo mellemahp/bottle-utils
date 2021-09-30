@@ -1,9 +1,0 @@
-{% macro form_errors(errors) -%}
-<div class="login-error-container">
-    {% for error in errors %}
-    <div class="flash flash-{{error.lvl}}"> 
-        {{error.msg}} 
-    </div>
-    {% endfor %}
-</div>
-{% endmacro -%}

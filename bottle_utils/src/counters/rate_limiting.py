@@ -14,6 +14,8 @@ RATE_LIMIT_COUNTER_EXPIRATION_SEC = 1
 
 
 class RateLimitCounterManager(LogMixin):
+    HASHED_FORMAT_STR = "{ip_addr}{url}"
+
     def __init__(self, redis_client):
         self.redis_client = redis_client
 
@@ -26,9 +28,10 @@ class RateLimitCounterManager(LogMixin):
             return self.create_counter(counter_key)
 
     def get_counter_key(self):
-        ip_addr = request.remote_addr
-        url = request.url
-        hashed_data = hashlib.md5(f"{ip_addr}{url}".encode("utf8")).hexdigest()
+        hashed_data = hashlib.sha256(self.HASHED_FORMAT_STR.format(
+            ip_addr = request.remote_addr, 
+            url = request.url
+        ).encode("utf8")).hexdigest()
 
         return f"{RATE_LIMIT_PREFIX}:{hashed_data}"
 

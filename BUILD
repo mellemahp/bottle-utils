@@ -1,3 +1,20 @@
+py_library(
+    name = "all_utils",
+    srcs = [],
+    data = [],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":connectors",
+        ":forms",
+        ":email",
+        ":counters",
+        ":monitoring",
+        ":templating",
+        ":tokens",
+        ":wrappers",
+    ],
+)
+
 alias(
     name = "connectors",
     actual = "//bottle_utils/src/connectors:connectors_lib",
@@ -5,14 +22,14 @@ alias(
 )
 
 alias(
-    name = "forms",
+    name = "counters",
     actual = "//bottle_utils/src/counters:counters_lib",
     visibility = ["//visibility:public"],
 )
 
 alias(
-    name = "forms",
-    actual = "//bottle_utils/src/emails:emails_lib",
+    name = "email",
+    actual = "//bottle_utils/src/email:email_lib",
     visibility = ["//visibility:public"],
 )
 
