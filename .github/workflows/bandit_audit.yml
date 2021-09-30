@@ -1,0 +1,12 @@
+name: Run bandit
+on: [push, pull_request]
+jobs:
+  bandit_check:
+    name: runner / bandit auditor
+    runs-on: ubuntu-latest
+    steps:
+      - uses:  tj-actions/bandit@v5
+        with:
+          targets: bottle_utils/src
+  
+    
