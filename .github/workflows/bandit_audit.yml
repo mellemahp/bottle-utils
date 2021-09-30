@@ -7,6 +7,6 @@ jobs:
     steps:
       - uses:  tj-actions/bandit@v5
         with:
-          targets: bottle_utils/src
+          targets: ./bottle_utils/src
   
     
