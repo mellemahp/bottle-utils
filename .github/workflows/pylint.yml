@@ -1,0 +1,15 @@
+name: Linting
+on: [push, pull_request]
+jobs:
+  linting:
+    name: runner / pylint auditor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: pip3 install -U pip setuptools
+      - run: pip3 install -U -r requirements.txt
+      - run: pip3 install -U pylint
+      - run: pip3 install -U pylint-fail-under
+      - run: pylint-fail-under --fail_under 9.5 bottle_utils/src/
+        
