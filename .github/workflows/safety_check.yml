@@ -1,10 +1,12 @@
 name: Package Safety Check
 on: [ push, pull_request ]
+env:
+  DEP_PATH: src/requirements.txt
 jobs:
   safety_check:
     runs-on: ubuntu-latest
     steps:
-      - name: Python Safety Check
-        uses: aufdenpunkt/python-safety-check@v1.0.5
+      - uses: actions/checkout@v2
+      - uses: aufdenpunkt/python-safety-check@v1.0.5
         with:
           scan_requirements_file_only: true
