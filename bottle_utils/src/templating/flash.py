@@ -32,7 +32,7 @@ class Flash:
 
 
 class FlashLvl(Enum):
-    """ Level (think log level) of notification"""
+    """Level (think log level) of notification"""
 
     INFO = 0
     WARN = 1

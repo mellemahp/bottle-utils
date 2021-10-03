@@ -63,6 +63,6 @@ class RequestCounter:
         self.value = value
 
     def increment(self):
-        """ Increments a redis counter """
+        """Increments a redis counter"""
         self.redis_client.incr(self.counter_key)
         self.value += 1
