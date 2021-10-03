@@ -9,7 +9,7 @@
 <a href="https://github.com/mellemahp/bottle-utils/actions"><img alt="Actions Status" src="https://github.com/mellemahp/bottle-utils/actions/workflows/pylint.yml/badge.svg"></a>
 <a href="https://github.com/mellemahp/bottle-utils/actions"><img alt="Actions Status" src="https://github.com/mellemahp/bottle-utils/actions/workflows/bazel.yml/badge.svg"></a>
 <!-- Format and Language Badges -->
-<a href="https://www.python.org/"><img alt="Language: Python" src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg"></a>
+<a href="https://www.python.org/"><img alt="Language: Python" src="https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
