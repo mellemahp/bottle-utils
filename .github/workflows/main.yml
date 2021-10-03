@@ -1,0 +1,14 @@
+name: Bazel
+on: [ push, pull_request ]
+jobs:
+  bazel_build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup bazel
+      uses: jwlawson/actions-setup-bazel@v1
+      with:
+        bazel-version: '4.0.0'
+    - name: Build All Targets
+      run: bazel build //...
+    - name: Test All Targets
+      run: bazel test //...
