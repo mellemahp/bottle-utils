@@ -12,7 +12,9 @@
 <a href="https://www.python.org/"><img alt="Language: Python" src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg"></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
+
 ---
+
 A collection of common functions and middleware for Python Bottle applications. 
 
 
