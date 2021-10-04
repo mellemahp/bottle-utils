@@ -89,7 +89,7 @@ class SessionTokenManager(BaseTokenManager):
             csrf_token,
         )
 
-        self.set_token_data(session_token, session.__dict__)
+        self.set_token_data(session_token, session.to_dict())
 
         return session
 
@@ -199,7 +199,7 @@ class Session:
             data[CSRF_FIELD_NAME],
         )
 
-    def __dict__(self):
+    def to_dict(self):
         return {
             USER_ID_KEY: self.user_uuid,
             USERNAME_KEY: self.username,
