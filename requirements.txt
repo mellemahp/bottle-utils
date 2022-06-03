@@ -1,7 +1,7 @@
 redis==3.5.3
 structlog==21.1.0
 WTForms==2.3.3
-bottle==0.12.19
+bottle==0.12.20
 peewee==3.14.4
 redislite==6.0.674960
 psutil==5.8.0
